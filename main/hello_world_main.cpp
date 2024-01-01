@@ -88,9 +88,14 @@ static void app_send_hid_demo(void)
     tud_hid_keyboard_report(HID_ITF_PROTOCOL_KEYBOARD, 0, NULL);
 }
 
-
-
 extern "C" void app_main() {
+    while (true) {
+        printf("Hey\n");
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
+
+extern "C" void app2_main() {
     ActivityLed::registerLight();
 
     // Initialize button that will trigger HID reports
