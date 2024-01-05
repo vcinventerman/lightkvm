@@ -2,6 +2,18 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Launch GDB-Stub",
+      "type": "shell",
+      "windows": {
+        "command": "./support.ps1 gdb ${config:idf.portWin}"
+      },
+      "linux": {
+        "command": "./support.ps1 gdb ${config:idf.port}"
+      }
+    },
+
+
+    {
       "label": "Build - Build project",
       "type": "shell",
       "command": "${config:idf.pythonBinPath} ${config:idf.espIdfPath}/tools/idf.py build",

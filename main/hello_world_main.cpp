@@ -88,16 +88,53 @@ static void app_send_hid_demo(void)
     tud_hid_keyboard_report(HID_ITF_PROTOCOL_KEYBOARD, 0, NULL);
 }
 
-extern "C" void app_main() {
+extern "C" void app2_main() {
     while (true) {
-        printf("Hey\n");
+        printf("Hey2\n");
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
-extern "C" void app2_main() {
-    ActivityLed::registerLight();
+extern "C" void app_main(void)
+{
+    /* Setting TinyUSB up */
+    ESP_LOGI(TAG, "USB initialization");
 
+    const tinyusb_config_t tusb_cfg = {
+        .device_descriptor = NULL,
+        .string_descriptor = NULL,
+        .external_phy = false, // In the most cases you need to use a `false` value
+        .configuration_descriptor = NULL,
+    };
+
+    ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
+
+    tinyusb_config_cdcacm_t acm_cfg = { TINYUSB_USBDEV_0 }; // the configuration uses default values
+    ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
+
+    ESP_LOGI(TAG, "USB initialization DONE");
+    while (1) {
+        ESP_LOGI(TAG, "log -> UART");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        fprintf(stdout, "example: print -> stdout\n");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        fprintf(stderr, "example: print -> stderr\n");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        esp_tusb_init_console(TINYUSB_CDC_ACM_0); // log to usb
+        ESP_LOGI(TAG, "log -> USB");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        fprintf(stdout, "example: print -> stdout\n");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        fprintf(stderr, "example: print -> stderr\n");
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        esp_tusb_deinit_console(TINYUSB_CDC_ACM_0); // log to uart
+    }
+}
+
+extern "C" void app3_main() {
+    ActivityLed::registerLight();
+    
     // Initialize button that will trigger HID reports
     const gpio_config_t boot_button_config = {
         .pin_bit_mask = BIT64(APP_BUTTON),
@@ -111,25 +148,27 @@ extern "C" void app2_main() {
     ESP_LOGI(TAG, "USB initialization");
     const tinyusb_config_t tusb_cfg = {
         .device_descriptor = NULL,
-        .string_descriptor = hid_string_descriptor,
-        .string_descriptor_count = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
+        .string_descriptor = NULL, //hid_string_descriptor,
+        .string_descriptor_count = 0, // = sizeof(hid_string_descriptor) / sizeof(hid_string_descriptor[0]),
         .external_phy = false,
-        .configuration_descriptor = hid_configuration_descriptor,
+        .configuration_descriptor = NULL // = hid_configuration_descriptor,
     };
 
     ESP_ERROR_CHECK(tinyusb_driver_install(&tusb_cfg));
-
-    while (true) {
-        ActivityLed::blink();
-    }
-
-    ActivityLed::blink();
 
     tinyusb_config_cdcacm_t acm_cfg = { TINYUSB_USBDEV_0 }; // the configuration uses default values
     ESP_ERROR_CHECK(tusb_cdc_acm_init(&acm_cfg));
 
     ESP_LOGI(TAG, "USB initialization DONE");
     ActivityLed::blink();
+
+    while (true) {
+        fprintf(stdout, "example: print -> stdout\n");
+        ESP_LOGI(TAG, "log -> UART");
+        printf("printf test\n");
+        ActivityLed::blink();
+        vTaskDelay(pdMS_TO_TICKS(300));
+    }
 
     while (1) {
         if (tud_mounted()) {
