@@ -1,5 +1,5 @@
-#ifndef UART_H
-#define UART_H
+#ifndef PRINT_H
+#define PRINT_H
 
 #include "driver/uart.h"
 
@@ -10,6 +10,7 @@ void initUart() {
         .parity    = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .rx_flow_ctrl_thresh = 0,
         .source_clk = UART_SCLK_DEFAULT,
     };
     int intr_alloc_flags = 0;
@@ -25,10 +26,13 @@ void initUart() {
 
 void print(std::string_view str) {
     printf(str.data());
+
+    // Print to UART0 when it isn't the default channel
     //uart_write_bytes(0, str.data(), str.size());
 
+    // Print to USB when it isn't the default channel
     tinyusb_cdcacm_write_queue(TINYUSB_CDC_ACM_0, (const uint8_t*)str.data(), str.size());
     tinyusb_cdcacm_write_flush(TINYUSB_CDC_ACM_0, 0);
 }
 
-#endif
+#endif // ifndef PRINT_H

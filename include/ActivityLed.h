@@ -8,7 +8,7 @@
 #define BLINK_GPIO GPIO_NUM_15
 
 namespace ActivityLed {
-    void registerLight() {
+    void init() {
         gpio_reset_pin(BLINK_GPIO);
         gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
         gpio_set_level(BLINK_GPIO, false);
