@@ -1,9 +1,10 @@
 #ifndef ACTIVITY_LED_H
 #define ACTIVITY_LED_H
 
-#include "freertos/task.h"
-
-#include "Unit.h"
+#include <freertos/task.h>
+#include <sdkconfig.h>
+#include <FreeRTOSConfig.h>
+#include <projdefs.h>
 
 #define BLINK_GPIO GPIO_NUM_15
 
