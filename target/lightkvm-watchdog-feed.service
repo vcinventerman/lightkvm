@@ -1,0 +1,15 @@
+[Unit]
+Description=Regularly feeds external LightKVM chip
+
+# An example of a service that starts soon after USB ports are mounted on my system
+Before=multipathd.service
+
+[Service]
+User=root
+WorkingDirectory=/
+
+# Fill in your python installation with pyserial and path
+ExecStart=/usr/bin/python3.11 /home/nickk/dev/lightkvm/target/watchdog_feed.py
+
+[Install]
+WantedBy=multi-user.target

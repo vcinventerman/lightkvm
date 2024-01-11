@@ -5,11 +5,12 @@
 
 #include "driver/uart.h"
 
-void initUart() {
+void initUart()
+{
     uart_config_t uart_config = {
         .baud_rate = 115200,
         .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
+        .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .rx_flow_ctrl_thresh = 0,
@@ -26,14 +27,15 @@ void initUart() {
     ESP_ERROR_CHECK(uart_set_pin(0, 1, 2, -1, -1));
 }
 
-void print(std::string_view str) {
+void print(std::string_view str)
+{
     printf(str.data());
 
     // Print to UART0 when it isn't the default channel
-    //uart_write_bytes(0, str.data(), str.size());
+    // uart_write_bytes(0, str.data(), str.size());
 
     // Print to USB when it isn't the default channel
-    tinyusb_cdcacm_write_queue(TINYUSB_CDC_ACM_0, (const uint8_t*)str.data(), str.size());
+    tinyusb_cdcacm_write_queue(TINYUSB_CDC_ACM_0, (const uint8_t *)str.data(), str.size());
     tinyusb_cdcacm_write_flush(TINYUSB_CDC_ACM_0, 0);
 }
 
