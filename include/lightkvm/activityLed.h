@@ -21,6 +21,7 @@ namespace ActivityLed {
         gpio_set_level(BLINK_GPIO, false);
         vTaskDelay(pdMS_TO_TICKS(300));
     }
+    
 };
 
 #endif // ifndef ACTIVITY_LED_H

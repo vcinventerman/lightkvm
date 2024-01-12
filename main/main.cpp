@@ -9,11 +9,14 @@
 #include <driver/gpio.h>
 #include <soc/periph_defs.h>
 #include <hal/cpu_hal.h>
+#include <esp_ota_ops.h>
 
 #include <lightkvm/print.h>
 #include <lightkvm/activityLed.h>
 #include <lightkvm/usb.h>
 #include <lightkvm/unit.h>
+#include <lightkvm/wireless.h>
+#include <lightkvm/update.h>
 
 // GPIO of the signal line for the power button
 constexpr gpio_num_t POWER_BUTTON_GPIO = GPIO_NUM_14;
@@ -112,7 +115,8 @@ void statusIndicator(void *params)
 {
     while (true)
     {
-        gpio_set_level(BLINK_GPIO, !gpio_get_level(BLINK_GPIO));
+        static bool toggle = false;
+        gpio_set_level(BLINK_GPIO, toggle = !toggle);
         vTaskDelay(ledFreq);
     }
 }
@@ -149,13 +153,22 @@ extern "C"
 {
     void init()
     {
+        printf("LightKVM Version %d\n", VERSION);
+
         initPowerButton();
         ActivityLed::init();
 
         setupUsb();
 
         xTaskCreate(watchdog, "watchdog", configMINIMAL_STACK_SIZE, nullptr, tskIDLE_PRIORITY + 10, nullptr);
-        xTaskCreate(statusIndicator, "statusIndicator", configMINIMAL_STACK_SIZE, nullptr, tskIDLE_PRIORITY, nullptr);
+        xTaskCreate(statusIndicator, "statusIndicator", configMINIMAL_STACK_SIZE, nullptr, tskIDLE_PRIORITY + 9, nullptr);
+
+        startWifi();
+
+        // If it has survived this far, the software is probably good
+        esp_ota_mark_app_valid_cancel_rollback();
+
+        xTaskCreate(updater, "updater", 8192, nullptr, tskIDLE_PRIORITY, nullptr);
     }
 
     void app_main(void)

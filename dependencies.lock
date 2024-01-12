@@ -1,4 +1,10 @@
 dependencies:
+  bblanchon/arduinojson:
+    component_hash: f0d5b0967da8ccd38f30e48b50cf6060d46eb50465728deffd70b62d49d92335
+    source:
+      service_url: https://api.components.espressif.com/
+      type: service
+    version: 7.0.1
   espressif/esp_tinyusb:
     component_hash: f8682cfddb743297ec1350d7cc52dff6b535c737c60c6a388cdcf2e9dc0eca4b
     source:
@@ -6,16 +12,16 @@ dependencies:
       type: service
     version: 1.4.2~2
   espressif/tinyusb:
-    component_hash: 632ddbd9c73bee5005e7684eed3142649a08d1f304dbe42abed8110b7384e2c2
+    component_hash: a11195d4c7c385aa2b1430009486dd4007920307d13b7db474a62ff040907d8f
     source:
       service_url: https://api.components.espressif.com/
       type: service
-    version: 0.15.0~3
+    version: 0.15.0~4
   idf:
     component_hash: null
     source:
       type: idf
     version: 5.1.2
-manifest_hash: 0d2fdb4bb46bfdee6fe3cded72a6a0a21bf0ebda71834188b2afec785804884a
+manifest_hash: f42c0e356eaf31e8e203ded609fda5b50439c9d90f4ed7db521e169a226c8504
 target: esp32s2
 version: 1.0.0
