@@ -1,0 +1,11 @@
+#ifndef CREDS_TXT
+#define CREDS_TXT
+
+// Customize as needed
+
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+
+const char *updateServers[] = {"example.com"};
+
+#endif // #ifndef CREDS_TXT

@@ -23,7 +23,7 @@ constexpr gpio_num_t POWER_BUTTON_GPIO = GPIO_NUM_14;
 
 constexpr TickType_t KEY_PRESS_DURATION = 100_ms;
 constexpr TickType_t POWER_BUTTON_START_DURATION = 250_ms;
-constexpr TickType_t  POWER_BUTTON_RESET_DURATION = 11_s;
+constexpr TickType_t POWER_BUTTON_RESET_DURATION = 11_s;
 
 // Time from power button press to feeding the watchdog (takes 45s on my machine)
 constexpr TickType_t COMPUTER_BOOT_DURATION = 60_s;
@@ -44,14 +44,14 @@ TickType_t ledFreq = 250_ms;
 
 void initPowerButton()
 {
-    gpio_config_t config = 
-    {
-        .pin_bit_mask = (1ULL << POWER_BUTTON_GPIO),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE,
-    };
+    gpio_config_t config =
+        {
+            .pin_bit_mask = (1ULL << POWER_BUTTON_GPIO),
+            .mode = GPIO_MODE_OUTPUT,
+            .pull_up_en = GPIO_PULLUP_ENABLE,
+            .pull_down_en = GPIO_PULLDOWN_DISABLE,
+            .intr_type = GPIO_INTR_DISABLE,
+        };
 
     gpio_config(&config);
 }

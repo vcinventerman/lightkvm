@@ -20,13 +20,6 @@
 
 #define MAX_HTTP_OUTPUT_BUFFER 2048
 
-const char *updateServers[] =
-    {
-        "192.168.1.200"
-        //"karrmedia.com",
-        //"192.168.1.4"
-};
-
 constexpr int OTA_HTTP_RESP_SIZE = 2048;
 
 // The JSON parsing space for the OTA task

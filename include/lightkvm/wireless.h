@@ -7,7 +7,7 @@
 
 #include "creds.txt"
 
-//todo: move this to a message box
+// todo: move this to a message box
 EventGroupHandle_t wifiEvents;
 #define WIFI_CONNECTED_BIT BIT0
 
@@ -28,18 +28,18 @@ void event_handler(void *arg, esp_event_base_t event_base,
         xEventGroupClearBits(wifiEvents, WIFI_CONNECTED_BIT);
 
         // Never give up, maybe the network will come up at some point
-        //todo: make sure this isn't spamming the network
+        // todo: make sure this isn't spamming the network
         esp_wifi_connect();
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
-        
+
         xEventGroupSetBits(wifiEvents, WIFI_CONNECTED_BIT);
     }
 
-    //todo: there are a lot of other esoteric event types that probably break it permanently
+    // todo: there are a lot of other esoteric event types that probably break it permanently
 }
 
 void startWifi()
