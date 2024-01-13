@@ -107,6 +107,7 @@ esp_err_t getJsonFromHost(const char *host)
     esp_http_client_handle_t client = esp_http_client_init(&httpConfig);
     std::unique_ptr<esp_http_client, cleanupHttpClient> cleanup(client);
 
+    memset(otaHttpResp, 0, sizeof(otaHttpResp));
     esp_err_t err = esp_http_client_perform(client);
 
     if (err == ESP_OK)
@@ -170,6 +171,7 @@ void findUpdate()
         esp_https_ota_config_t otaConfig = {};
         otaConfig.http_config = &config;
 
+        memset(otaHttpResp, 0, sizeof(otaHttpResp));
         err = esp_https_ota(&otaConfig);
         if (err == ESP_OK)
         {
@@ -188,11 +190,9 @@ void updater(void *params)
 {
     xEventGroupWaitBits(wifiEvents, WIFI_CONNECTED_BIT, pdFALSE, pdTRUE, portMAX_DELAY);
 
-    findUpdate();
-
     while (true)
     {
-
+        findUpdate();
         vTaskDelay(pdMS_TO_TICKS(checkFreq * 1000));
     }
 }

@@ -29,7 +29,7 @@ constexpr TickType_t POWER_BUTTON_RESET_DURATION = 11_s;
 constexpr TickType_t COMPUTER_BOOT_DURATION = 60_s;
 
 // Upper bound on time from power button press to feeding the watchdog (takes 120s on my machine since GRUB waits for 30s after some events)
-constexpr TickType_t COMPUTER_MAX_BOOT_DURATION = 180_s;
+constexpr TickType_t COMPUTER_MAX_BOOT_DURATION = 300_s;
 
 // Time to initiate a reboot if the computer has yet to mount the USB keyboard
 // This is a bit shorter as the BIOS will usually mount it (takes 16s on my machine)
@@ -40,7 +40,7 @@ constexpr TickType_t COMPUTER_USB_READY_DURATION = 30_s;
 TickType_t lastSerialMessage = 0;
 
 // How often to change status of the indicator LED
-TickType_t ledFreq = 250_ms;
+TickType_t ledFreq = 0_s;
 
 void initPowerButton()
 {
@@ -113,11 +113,21 @@ void watchdog(void *params)
 
 void statusIndicator(void *params)
 {
+    static bool toggle = false;
+
     while (true)
     {
-        static bool toggle = false;
-        gpio_set_level(BLINK_GPIO, toggle = !toggle);
-        vTaskDelay(ledFreq);
+        toggle = ledFreq == 0 ? false : !toggle;
+        gpio_set_level(BLINK_GPIO, toggle);
+
+        if (ledFreq == 0)
+        {
+            vTaskDelay(1_s);
+        }
+        else
+        {
+            vTaskDelay(ledFreq);
+        }
     }
 }
 
@@ -129,7 +139,9 @@ void restart()
 
     // Turn on
     pressPowerButton();
-    vTaskDelay(30_s);
+
+    // somehow, my machine takes 65 seconds to POST
+    vTaskDelay(90_s);
 
     // All following operations should not affect the functioning of a system booting,
     // so they can safely assume it is stuck in the BIOS
@@ -196,7 +208,7 @@ extern "C"
                 printf("Missed too many pings, restarting\n");
                 ledFreq = 1_s;
                 restart();
-                ledFreq = 250_ms;
+                ledFreq = 0_s;
             }
 
             vTaskDelay(1_s);
